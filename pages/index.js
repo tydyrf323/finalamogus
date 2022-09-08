@@ -7,14 +7,17 @@ export default function SignIn() {
 
   const router = useRouter();
   const userRef = useRef();
+  const [loading, setLoad] = useState(false);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   useEffect(() => {
     userRef.current.focus();
     const verificar = async () => {
-      const session = await getSession();
-      console.log(session);
-      if (session) router.push('/dashboard');
+      getSession().then((ses) => {
+        setLoad(true);
+        console.log(ses);
+        if (ses) router.push('/dashboard');
+      })
     }
     verificar();
   }, []);
@@ -46,7 +49,7 @@ export default function SignIn() {
               <input type="password" placeholder="Contraseña..." className="px-4 py-2 mt-2 border border-green-600 rounded-full focus:outline-none focus:ring-1 focus:ring-purple-700 bg-transparent  transition ease-in-out delay-50 focus:-translate-y-1 focus:scale-110 duration-300"
                 name='pwd' id='pwd' onChange={(e) => setPassword(e.target.value)} value={password} required />
             </div>
-            <button className="w-full px-6 py-2 mt-7 bg-transparent rounded-md border-4 border-green-400 hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 duration-300 focus:-translate-y-1 focus:scale-110">Login</button>
+            {loading ? <button className="w-full px-6 py-2 mt-7 bg-transparent rounded-md border-4 border-green-400 hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 duration-300 focus:-translate-y-1 focus:scale-110">Login</button> : <p className="w-full px-6 py-2 mt-7 bg-transparent rounded-md border-4 border-green-400 text-center">Cargando...</p>}
           </div>
         </form>
       </div>

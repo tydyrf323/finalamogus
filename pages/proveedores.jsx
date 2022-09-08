@@ -80,11 +80,11 @@ export default function Proveedores({ session, response }) {
         </div>
         <div className='px-7'>
           <p className='font-bold my-2'>TELEFONO:</p>
-          <input type="text" name="tel" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} />
+          <input type="text" name="tel" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} placeholder="Opcional..." />
         </div>
         <div className='px-7'>
           <p className='font-bold my-2'>CORREO/EMAIL:</p>
-          <input type="text" name="correo" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} />
+          <input type="text" name="correo" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} placeholder="Opcional..." />
         </div>
         <div className='m-3'>
           <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>

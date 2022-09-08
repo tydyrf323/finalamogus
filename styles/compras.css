@@ -1,0 +1,24 @@
+.compras {
+    width: 100%;
+    height: 99vh;
+    display: grid;
+    grid-template-rows: 70px calc(80% - 70px) 20%;
+}
+
+.comprasform {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(200px, 25%) minmax(200px, 25%) minmax(200px, 25%) minmax(200px, 25%);
+    grid-template-rows: minmax(100px, 50%) minmax(100px, 50%) ;
+}
+
+.comprasform1 {
+    grid-row-start: 1;
+    grid-row-start: 1;
+}
+
+.comprasform2 {
+    grid-row-start: 2;
+    grid-row-start: 2;
+}

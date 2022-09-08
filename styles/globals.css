@@ -140,5 +140,5 @@ span {
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-columns: minmax(200px, 25%) minmax(200px, 25%) minmax(200px, 25%) minmax(200px, 25%);
 }

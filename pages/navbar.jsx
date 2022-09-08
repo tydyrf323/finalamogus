@@ -37,7 +37,7 @@ export default function Navbar({ ses }) {
             </button>
           </li>
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars'>
+            <button className='menu-bars' onClick={() => router.push('/compra')}>
               <RiHotelFill /><span>Compra</span>{/**/}
             </button>
           </li>
