@@ -6,16 +6,17 @@ import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
 
-const hoy = new Date();
-const today = hoy.setDate(hoy.getDate());
-const sus = new Date(today).toISOString().split('T')[0];
+const hoy = new Date(Date.now());
+const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-export default function Proveedores({ session, response, responseopt }) {
 
-  const [newTable, setnewTable] = useState(response);
+export default function Proveedores({ session, response, responseopt, responsecod }) {
+
+  const [tabla, setTabla] = useState([]);
   const [codig, setCodig] = useState({
     prov: responseopt[0].IdProveedor,
-    fecha: sus
+    fecha: sus,
+    cod: responsecod[0].codigo
   });
 
   const formChange = (event) => {
@@ -27,26 +28,40 @@ export default function Proveedores({ session, response, responseopt }) {
     console.log(codig);
   }
 
+  const handleRemoveItem = idx => {
+    const temp = [...tabla];
+    temp.splice(idx, 1);
+    setTabla(temp);
+  }
+
   async function onsub(e) {
     e.preventDefault();
-    await axios.post('/api/compraget', {
+    let prefixNumber = await axios.get('/api/comprafilter', { params: { prefix: codig.cod } });
+    let number = prefixNumber.data[0]["COUNT(*)"];
+    number++;
+    setTabla((prev) => [...prev, {
+      fecha: codig.fecha,
+      fac: codig.fac,
+      prov: codig.prov,
+      cod: `${codig.cod}` + "-" + `${number}`,
+      desc: codig.desc,
+      monto: codig.monto,
+      cantidad: codig.cantidad,
+      venta: codig.venta,
+      obser: codig.obser
+    }]);
+    axios.post('/api/compraget', {
       IdUsuario: session.user,
-      Codigo: codig.cod,
-      IdProveedor: codig.prov,
-      Desc: codig.desc,
-      Cantidad: codig.cantidad,
+      Fecha: codig.fecha,
       Fac: codig.fac,
+      IdProveedor: codig.prov,
+      Codigo: `${codig.cod}` + "-" + `${number}`,
+      Desc: codig.desc,
       Monto: codig.monto,
+      Cantidad: codig.cantidad,
       Precio: codig.venta,
-      Obser: codig.obser,
-      Fecha: codig.fecha
-    }).then(async () => {
-      toast.success("Compra Registrada");
-      let x = await axios.get('/api/compraget');
-      setnewTable(x.data);
-    }).catch(() => {
-      toast.error("Compra repetida");
-    })
+      Obser: codig.obser
+    }).then(() => toast.success('Compra Añadida')).catch((e) => { console.log(e); toast.error('Error') });
   };
 
   return (
@@ -58,7 +73,61 @@ export default function Proveedores({ session, response, responseopt }) {
         <Navbar ses={session} />
         <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">COMPRAS</p>
       </div>
-      <table className='uno w-full text-white text-center h-fit'>
+      <form className='comprasuno text-white comprasform fadetexts' onSubmit={onsub} autoComplete='off'>
+        <div className='px-7 comprasform1'>
+          <p className='font-bold my-2'>FECHA:</p>
+          <input type="date" name="fecha" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required value={codig.fecha} />
+        </div>
+        <div className='px-7 comprasform1'>
+          <p className='font-bold my-2'>FACTURA:</p>
+          <input type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='X11...' />
+        </div>
+        <div className='px-7 comprasform1'>
+          <p className='font-bold my-2'>PROVEEDOR:</p>
+          <select name="prov" id="prov" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
+            {responseopt.map((item, index) => (
+              <option key={index} className='bg-black' value={item.IdProveedor}>{item.IdProveedor}</option>
+            ))}
+          </select>
+        </div>
+        <div className='px-7 comprasform1'>
+          <p className='font-bold my-2'>CODIGO:</p>
+          <select name="cod" id="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
+            {responsecod.map((item, index) => (
+              <option key={index} className='bg-black' value={item.codigo}>{item.codigo} | {item.producto}</option>
+            ))}
+          </select>
+        </div>
+        <div className='px-7 comprasform1'>
+          <p className='font-bold my-2'>DESCRIPCION:</p>
+          <input type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='Descripcion...' />
+          <datalist id="desc">
+              {responsecod.map((item, index) => (
+                <option value={item.producto} key={index}>{item.producto}</option>
+              ))}
+          </datalist>
+        </div>
+        <div className='px-7 comprasform2'>
+          <p className='font-bold my-2'>MONTO TOTAL:</p>
+          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' />
+        </div>
+        <div className='px-7 comprasform2'>
+          <p className='font-bold my-2'>CANTIDAD:</p>
+          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={formChange} required placeholder='1...' />
+        </div>
+        <div className='px-7 comprasform2'>
+          <p className='font-bold my-2'>PRECIO UNITARIO:</p>
+          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' />
+        </div>
+        <div className='px-7 comprasform2'>
+          <p className='font-bold my-2'>OBSERVACION:</p>
+          <input type="text" name="obser" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} placeholder="Opcional..." />
+        </div>
+        <div className='m-3 comprasform2'>
+          <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
+        </div>
+      </form>
+      <table className='comprasdos w-full text-white text-center h-fit mt-3'>
         <thead className='bg-[#2d0080] border-b border-gray-500'>
           <tr className='fadetext'>
             <th className='sticky py-2 resize-x overflow-auto w-auto'>COD</th>
@@ -75,76 +144,29 @@ export default function Proveedores({ session, response, responseopt }) {
           </tr>
         </thead>
         <tbody>
-          {newTable.map((item, index) => <tr className='whitespace-nowrap bg-[#1e2124] border-b border-gray-500 fadetext' key={index}>
-            <td className='py-2 border-gray-500 border-r w-auto'>{item.Codigo}</td>
-            <td className='border-gray-500 border-r'>{item.IdUsuario}</td>
-            <td className='border-gray-500 border-r'>{item.IdProveedor}</td>
-            <td className='border-gray-500 border-r'>{item.Descripcion}</td>
-            <td className='border-gray-500 border-r'>{item.Cantidad}</td>
-            <td className='border-gray-500 border-r'>{item.MontoTotal}</td>
-            <td className='border-gray-500 border-r'>{item.PrecioVenta}</td>
-            <td className='border-gray-500 border-r'>{item.Factura}</td>
-            <td className='border-gray-500 border-r'>{item.FechaCompra.split('T')[0]}</td>
-            <td className='border-gray-500 border-r'>{item.Observacion}</td>
+          {tabla.map((item, index) => <tr className='whitespace-nowrap bg-[#1e2124] border-b border-gray-500 fadetext' key={index}>
+            <td className='py-2 border-gray-500 border-r w-auto'>{item.cod}</td>
+            <td className='border-gray-500 border-r'>{session.user}</td>
+            <td className='border-gray-500 border-r'>{item.prov}</td>
+            <td className='border-gray-500 border-r'>{item.desc}</td>
+            <td className='border-gray-500 border-r'>{item.cantidad}</td>
+            <td className='border-gray-500 border-r'>{item.monto}</td>
+            <td className='border-gray-500 border-r'>{item.venta}</td>
+            <td className='border-gray-500 border-r'>{item.fac}</td>
+            <td className='border-gray-500 border-r'>{item.fecha.split('T')[0]}</td>
+            <td className='border-gray-500 border-r'>{item.obser}</td>
             <td className='border-gray-500 border-r'><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
+              handleRemoveItem(index);
               axios.post('/api/delcompra', {
-                prov: item.IdCompra
-              }).then(async () => {
-                toast.success("Compra Borrada");
-                let x = await axios.get('/api/compraget');
-                setnewTable(x.data);
-              }).catch(() => {
-                toast.error("Error");
-              })
+                id: item.cod
+              }).then(() => toast.success(`Codigo: ${item.cod} Borrado`)).catch((e) => console.log(e))
             }}><FiTrash2 /></button></td>
           </tr>)}
         </tbody>
       </table>
-      <form className='dos text-white comprasform fadetext' onSubmit={onsub} autoComplete='off'>
-        <div className='px-7 comprasform1'>
-          <p className='font-bold my-2'>PROVEEDOR:</p>
-          <select name="prov" id="prov" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
-            {responseopt.map((item, index) => (
-              <option key={index} className='bg-black' value={item.IdProveedor}>{item.IdProveedor}</option>
-            ))}
-          </select>
-        </div>
-        <div className='px-7 comprasform1'>
-          <p className='font-bold my-2'>DESCRIPCION:</p>
-          <input type="text" name="desc" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='Descripcion...' />
-        </div>
-        <div className='px-7 comprasform1'>
-          <p className='font-bold my-2'>MONTO TOTAL:</p>
-          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' />
-        </div>
-        <div className='px-7 comprasform1'>
-          <p className='font-bold my-2'>CANTIDAD:</p>
-          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={formChange} required placeholder='1...' />
-        </div>
-        <div className='px-7 comprasform1'>
-          <p className='font-bold my-2'>CODIGO:</p>
-          <input type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='Codigo...' />
-        </div>
-        <div className='px-7 comprasform2'>
-          <p className='font-bold my-2'>FECHA:</p>
-          <input type="date" name="fecha" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required value={codig.fecha} />
-        </div>
-        <div className='px-7 comprasform2'>
-          <p className='font-bold my-2'>PRECIO VENTA:</p>
-          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' />
-        </div>
-        <div className='px-7 comprasform2'>
-          <p className='font-bold my-2'>FACTURA:</p>
-          <input type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='X11...' />
-        </div>
-        <div className='px-7 comprasform2'>
-          <p className='font-bold my-2'>OBSERVACION:</p>
-          <input type="text" name="obser" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} placeholder="Opcional..." />
-        </div>
-        <div className='m-3 comprasform2'>
-          <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
-        </div>
-      </form>
+      <div className='m-3 comprastres justify-center flex'>
+        <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">VER TODOS</button>
+      </div>
     </div>
   )
 }
@@ -154,10 +176,10 @@ export async function getServerSideProps(context) {
   console.log(session);
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
-    const resp = await fetch('http://192.168.3.4:3000/api/compraget');
     const respopt = await fetch('http://192.168.3.4:3000/api/provget');
-    const response = await resp.json();
+    const respcod = await fetch('http://192.168.3.4:3000/api/prod', { method: 'GET' });
     const responseopt = await respopt.json();
-    return { props: { session, response, responseopt } };
+    const responsecod = await respcod.json();
+    return { props: { session, responseopt, responsecod } };
   }
 } 

@@ -1,9 +1,9 @@
 import { pool } from "../../src/database";
 
-export default async function provPost(req, res) {
+export default async function delCompra(req, res) {
     try {
-        let { prov } = req.body;
-        await pool.query("DELETE FROM compras WHERE IdCompra = ?;", [prov]);
+        let { id } = req.body;
+        await pool.query("DELETE FROM compras WHERE Codigo = ?;", [id]);
         res.status(200).end();
     } catch (error) {
         console.log(error);

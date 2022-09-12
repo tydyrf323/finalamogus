@@ -1,5 +1,5 @@
 import { FaBars, FaUserAlt, FaMoneyCheck, FaSignOutAlt } from 'react-icons/fa';
-import { AiOutlineClose } from 'react-icons/ai';
+import { AiOutlineClose, AiFillShopping } from 'react-icons/ai';
 import { useState } from 'react';
 import { RiMoneyDollarBoxLine, RiBarChart2Fill, RiHotelFill, RiProfileFill, RiInstallFill } from 'react-icons/ri';
 import { useRouter } from 'next/router';
@@ -44,6 +44,11 @@ export default function Navbar({ ses }) {
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
             <button className='menu-bars' onClick={() => router.push('/proveedores')}>
               <RiInstallFill /><span>Proveedores</span>{/**/}
+            </button>
+          </li>
+          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+            <button className='menu-bars' onClick={() => router.push('/prods')}>
+              <AiFillShopping /><span>Productos</span> {/**/}
             </button>
           </li>
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">

@@ -1,5 +1,5 @@
 import { pool } from "../../src/database";
-export default async function getProvs(req, res) {
+export default async function getCompra(req, res) {
     if (req.method === 'POST') {
         try {
             let { IdUsuario, Codigo, IdProveedor, Desc, Cantidad, Fac, Monto, Precio, Obser, Fecha } = req.body;
@@ -8,7 +8,7 @@ export default async function getProvs(req, res) {
         } catch (error) {
             console.log(error);
             res.status(500);
-            res.send(error).end();
+            res.send(error);
         }
     } else {
         try {
