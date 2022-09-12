@@ -2,6 +2,7 @@ import { getSession } from 'next-auth/react';
 import { useState } from "react";
 import { toast } from 'react-hot-toast';
 import { FiTrash2 } from 'react-icons/fi';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
@@ -10,9 +11,10 @@ const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
 
-export default function Proveedores({ session, response, responseopt, responsecod }) {
+export default function Proveedores({ session, responseopt, responsecod }) {
 
   const [tabla, setTabla] = useState([]);
+  const router = useRouter();
   const [codig, setCodig] = useState({
     prov: responseopt[0].IdProveedor,
     fecha: sus,
@@ -73,7 +75,7 @@ export default function Proveedores({ session, response, responseopt, responseco
         <Navbar ses={session} />
         <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">COMPRAS</p>
       </div>
-      <form className='comprasuno text-white comprasform fadetexts' onSubmit={onsub} autoComplete='off'>
+      <form className='comprasuno text-white comprasform fadetext' onSubmit={onsub} autoComplete='off'>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>FECHA:</p>
           <input type="date" name="fecha" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required value={codig.fecha} />
@@ -102,22 +104,22 @@ export default function Proveedores({ session, response, responseopt, responseco
           <p className='font-bold my-2'>DESCRIPCION:</p>
           <input type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='Descripcion...' />
           <datalist id="desc">
-              {responsecod.map((item, index) => (
-                <option value={item.producto} key={index}>{item.producto}</option>
-              ))}
+            {responsecod.map((item, index) => (
+              <option value={item.producto} key={index}>{item.producto}</option>
+            ))}
           </datalist>
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>MONTO TOTAL:</p>
-          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' />
+          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={(e) => { formChange(e); setCodig((prev) => ({ ...prev, venta: (prev.monto / prev.cantidad).toFixed(2) })) }} required placeholder='0.01' />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>CANTIDAD:</p>
-          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={formChange} required placeholder='1...' />
+          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={(e) => { formChange(e); setCodig((prev) => ({ ...prev, venta: (prev.monto / prev.cantidad).toFixed(2) })) }} required placeholder='1...' />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>PRECIO UNITARIO:</p>
-          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' />
+          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' value={codig.venta} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>OBSERVACION:</p>
@@ -159,13 +161,13 @@ export default function Proveedores({ session, response, responseopt, responseco
               handleRemoveItem(index);
               axios.post('/api/delcompra', {
                 id: item.cod
-              }).then(() => toast.success(`Codigo: ${item.cod} Borrado`)).catch((e) => console.log(e))
+              }).then(() => toast(`Codigo: ${item.cod} Borrado`)).catch((e) => console.log(e))
             }}><FiTrash2 /></button></td>
           </tr>)}
         </tbody>
       </table>
       <div className='m-3 comprastres justify-center flex'>
-        <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">VER TODOS</button>
+        <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/comprastabla')}>VER TODOS</button>
       </div>
     </div>
   )
