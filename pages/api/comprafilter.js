@@ -3,8 +3,7 @@ import { pool } from "../../src/database";
 export default async function compraFilter(req, res) {
     try {
         let { prefix } = req.query;
-        console.log(prefix);
-        const [rows] = await pool.query(`SELECT COUNT(*) FROM compras WHERE codigo like '${prefix}%';`);
+        const [rows] = await pool.query(`SELECT Codigo FROM compras WHERE Codigo LIKE '${prefix}%' ORDER BY Codigo DESC;`);
         res.json(rows);
     } catch (error) {
         console.log(error);

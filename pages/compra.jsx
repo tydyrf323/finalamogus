@@ -39,7 +39,7 @@ export default function Proveedores({ session, responseopt, responsecod }) {
   async function onsub(e) {
     e.preventDefault();
     let prefixNumber = await axios.get('/api/comprafilter', { params: { prefix: codig.cod } });
-    let number = prefixNumber.data[0]["COUNT(*)"];
+    let number = prefixNumber.data.length === 0 ? 0 : Number(prefixNumber.data[0]["Codigo"].split('-')[1]);
     number++;
     setTabla((prev) => [...prev, {
       fecha: codig.fecha,
