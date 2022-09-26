@@ -11,7 +11,7 @@ const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
 
-export default function Proveedores({ session, responseopt, responsecod }) {
+export default function Compras({ session, responseopt, responsecod }) {
 
   const [tabla, setTabla] = useState([]);
   const router = useRouter();
@@ -69,7 +69,7 @@ export default function Proveedores({ session, responseopt, responsecod }) {
   return (
     <div className='compras'>
       <Head>
-        <title>Compras</title>
+        <title>COMPRAS</title>
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />
@@ -161,7 +161,7 @@ export default function Proveedores({ session, responseopt, responsecod }) {
               handleRemoveItem(index);
               axios.post('/api/delcompra', {
                 id: item.cod
-              }).then(() => toast(`Codigo: ${item.cod} Borrado`)).catch((e) => console.log(e))
+              }).then(() => toast(`Codigo: ${item.cod} Borrado`)).catch((e) => console.error(e))
             }}><FiTrash2 /></button></td>
           </tr>)}
         </tbody>
@@ -184,4 +184,4 @@ export async function getServerSideProps(context) {
     const responsecod = await respcod.json();
     return { props: { session, responseopt, responsecod } };
   }
-} 
+}

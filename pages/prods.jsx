@@ -6,7 +6,7 @@ import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
 
-export default function Proveedores({ session, response }) {
+export default function Productos({ session, response }) {
 
   const [newTable, setnewTable] = useState(response);
   const [codig, setCodig] = useState({});
@@ -53,7 +53,7 @@ export default function Proveedores({ session, response }) {
   return (
     <div className='proveedores'>
       <Head>
-        <title>Proveedores</title>
+        <title>PROVEEDORES</title>
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />

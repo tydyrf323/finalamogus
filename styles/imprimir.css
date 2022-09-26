@@ -1,0 +1,27 @@
+/*#printext {
+    display: none;
+}*/
+#floatcenter {
+    top: 50%;
+    left: 50%;
+}
+
+@media print {
+    #imprimir {
+        display: none;
+    }
+
+    #printext {
+        display: inline;
+    }
+}
+
+.pagina {
+    background: white;
+    width: 10.48cm;
+    height: 24.13cm;
+}
+
+hr {
+    border-top: solid 3px #000 !important;
+}
