@@ -6,7 +6,15 @@ import { Toaster } from 'react-hot-toast'
 function MyApp({ Component, pageProps }) {
   return <>
     <Component {...pageProps} />
-    <Toaster/>
+    <Toaster toastOptions={{
+    className: '',
+    style: {
+      border: '3px solid #8F02DF',
+      fontWeight: 700,
+      background: 'black',
+      color: 'white'
+    }
+  }}/>
   </>
 }
 

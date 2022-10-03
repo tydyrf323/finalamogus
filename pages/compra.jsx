@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
-// CORREGIR COMPRA PRECIO UNITARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
@@ -18,7 +18,10 @@ export default function Compras({ session, responseopt, responsecod }) {
   const [codig, setCodig] = useState({
     prov: responseopt[0].IdProveedor,
     fecha: sus,
-    cod: responsecod[0].codigo
+    cod: responsecod[0].codigo,
+    cantidad: 1,
+    monto: 1,
+    venta: 0
   });
 
   const formChange = (event) => {
@@ -111,15 +114,21 @@ export default function Compras({ session, responseopt, responsecod }) {
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>MONTO TOTAL:</p>
-          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={(e) => { formChange(e); setCodig((prev) => ({ ...prev, venta: (prev.monto / prev.cantidad).toFixed(2) })) }} required placeholder='0.01' />
+          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={(e) => {
+            formChange(e);
+            setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + 0.3)) / (1 - 0.13)) }))
+          }} required value={codig.monto} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>CANTIDAD:</p>
-          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={(e) => { formChange(e); setCodig((prev) => ({ ...prev, venta: (prev.monto / prev.cantidad).toFixed(2) })) }} required placeholder='1...' />
+          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={(e) => {
+            formChange(e);
+            setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + 0.3)) / (1 - 0.13)) }))
+          }} required value={codig.cantidad} />
         </div>
         <div className='px-7 comprasform2'>
-          <p className='font-bold my-2'>PRECIO UNITARIO:</p>
-          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required placeholder='0.01' value={codig.venta} />
+          <p className='font-bold my-2'>PRECIO RECOMENDADO:</p>
+          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required value={codig.venta} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>OBSERVACION:</p>
@@ -129,7 +138,7 @@ export default function Compras({ session, responseopt, responsecod }) {
           <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
         </div>
       </form>
-      <table className='comprasdos w-full text-white text-center h-fit mt-3'>
+      <table className='comprasdos w-full text-white text-center h-fit mt-3 overflow-y-scroll'>
         <thead className='bg-[#2d0080] border-b border-gray-500'>
           <tr className='fadetext'>
             <th className='sticky py-2 resize-x overflow-auto w-auto'>COD</th>
@@ -161,12 +170,17 @@ export default function Compras({ session, responseopt, responsecod }) {
               handleRemoveItem(index);
               axios.post('/api/delcompra', {
                 id: item.cod
-              }).then(() => toast(`Codigo: ${item.cod} Borrado`)).catch((e) => console.error(e))
+              }).then(() => toast.success(`Codigo: ${item.cod} Borrado`, {
+                iconTheme: {
+                  primary: '#A200FF',
+                  secondary: '#fff',
+                },
+              })).catch((e) => console.error(e))
             }}><FiTrash2 /></button></td>
           </tr>)}
         </tbody>
       </table>
-      <div className='m-3 comprastres justify-center flex'>
+      <div className='m-3 comprastres justify-center flex z-10'>
         <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/comprastabla')}>VER TODOS</button>
       </div>
     </div>

@@ -33,7 +33,6 @@ input {
     background-color: #060b26;
     height: 70px;
     width: 70px;
-    padding-left: 2px;
     float: left;
     justify-content: flex-start;
     align-items: center;
@@ -42,7 +41,7 @@ input {
 }
 
 .menu-bars {
-    margin-left: 1rem;
+    padding-left: 1rem;
     font-size: 2rem;
     background: none;
 }

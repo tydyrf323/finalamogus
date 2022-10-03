@@ -22,7 +22,7 @@ export default function Navbar({ ses }) {
       <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
         <ul className="nav-menu-items">
           <li className="navbar-toggle transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300">
-            <button className='menu-bars w-full' onClick={showSidebar}>
+            <button className='menu-bars w-full h-full' onClick={showSidebar}>
               <AiOutlineClose color='#FFF' />
             </button>
           </li>
@@ -64,11 +64,6 @@ export default function Navbar({ ses }) {
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
             <button className='menu-bars'>
               <RiMoneyDollarBoxLine /><span>Gastos</span>
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars'>
-              <RiProfileFill /><span>Solicitar Prod.</span>
             </button>
           </li>
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
