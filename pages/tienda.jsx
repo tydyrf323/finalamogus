@@ -5,5 +5,9 @@ import axios from 'axios';
 import Head from "next/head";
 
 export default function Tienda() {
-  
+  return (
+    <div>
+      
+    </div>
+  )
 }
