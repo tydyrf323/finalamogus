@@ -70,7 +70,7 @@ export default function Compras({ session, responseopt, responsecod }) {
   return (
     <div className='compras'>
       <Head>
-        <title>COMPRAS</title>
+        <title>ENTRADAS</title>
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />

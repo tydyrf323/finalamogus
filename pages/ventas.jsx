@@ -239,7 +239,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
                     primary: '#A200FF',
                     secondary: '#fff',
                   },
-                })).catch((e) => console.error(e))
+                }))
               }}><FiTrash2 /></button></td>
             </tr>)}
           </tbody>
