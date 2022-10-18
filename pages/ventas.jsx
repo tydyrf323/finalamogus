@@ -6,10 +6,10 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
+import { DateTime } from 'luxon';
 import { numeroALetras } from '../src/numeroAletra';
 
 const hoy = new Date(Date.now());
-const today = new Date();
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
 export default function Ventas({ session, responseopt, responsecod }) {
@@ -20,7 +20,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
     time: '',
     datos: [],
     total: 0,
-    monto: 0
+    monto: 0,
+    fac: ''
   });
   const router = useRouter();
   const [codig, setCodig] = useState({
@@ -28,7 +29,11 @@ export default function Ventas({ session, responseopt, responsecod }) {
     fecha: sus,
     desc: '',
     precioProd: 0,
-    cliente: ''
+    cliente: '',
+    fac: '',
+    cod: '',
+    monto: '',
+    cantidad: ''
   });
 
   const formChange = (event) => {
@@ -63,8 +68,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
     if (tabla.length === 0) {
       toast.error("Se necesitan datos de venta para generar una factura.", {
         iconTheme: {
-          primary: '#facc15',
-          secondary: '#000'
+          primary: 'red',
+          secondary: '#fff'
         }
       })
     }
@@ -90,15 +95,18 @@ export default function Ventas({ session, responseopt, responsecod }) {
         cancelado += x;
         console.log(x);
       }
+      const today = DateTime.now();
       setFac({
         num: `${numeroALetras(sum)}`,
-        time: today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds(),
+        time: today.hour + ":" + today.minute + ":" + today.second,
         datos: unique,
         total: sum,
-        monto: cancelado
+        monto: cancelado,
+        fac: codig.fac
       })
-      console.log(fac);
-      window.print();
+      setTimeout(() => {
+        window.print();
+      }, 500);
     }
   }
 
@@ -131,6 +139,17 @@ export default function Ventas({ session, responseopt, responsecod }) {
       }).then(() => toast.success('Venta Añadida')).catch((e) => { console.log(e); toast.error('Error') });
     }
     else toast.error("Codigo Inexistente.");
+    setCodig({
+      prov: responseopt[0].IdProveedor,
+      fecha: sus,
+      desc: '',
+      precioProd: 0,
+      cliente: '',
+      fac: '',
+      cod: '',
+      monto: '',
+      cantidad: ''
+    })
   };
 
   return (
@@ -150,11 +169,11 @@ export default function Ventas({ session, responseopt, responsecod }) {
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>FACTURA:</p>
-            <input type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required onChange={formChange} placeholder='X11...' />
+            <input type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required onChange={formChange} placeholder='X11...' value={codig.fac} />
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>CODIGO:</p>
-            <input type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Codigo...' onChange={formChange} onBlur={blurred} />
+            <input type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Codigo...' onChange={formChange} onBlur={blurred} value={codig.cod} />
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>DESCRIPCION:</p>
@@ -170,50 +189,50 @@ export default function Ventas({ session, responseopt, responsecod }) {
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>MONTO PAGADO:</p>
-            <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} />
+            <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.monto} />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>PRECIO PROD.:</p>
-            <input type="number" name="precioProd" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.precioProd} />
+            <input type="number" name="precioProd" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.precioProd} disabled/>
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CANTIDAD:</p>
-            <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" required placeholder='1...' onChange={formChange} />
+            <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" required placeholder='1...' onChange={formChange} value={codig.cantidad} />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CLIENTE:</p>
-            <input type="text" name="cliente" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="Opcional..." onChange={formChange} />
+            <input type="text" name="cliente" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="Opcional..." onChange={formChange} value={codig.cliente} />
           </div>
         </form>
         <table className='comprasdos w-full text-white text-center h-fit mt-3'>
-          <thead className='bg-[#2d0080] border-b border-gray-500'>
-            <tr className='fadetext'>
-              <th className='sticky py-2 resize-x overflow-auto w-auto'>COD</th>
-              <th className='sticky resize-x overflow-auto'>USUARIO</th>
-              <th className='sticky resize-x overflow-auto'>PROVEEDOR</th>
-              <th className='sticky resize-x overflow-auto'>DESCRIPCION</th>
-              <th className='sticky resize-x overflow-auto'>QTY</th>
-              <th className='sticky resize-x overflow-auto'>MONTO PAGADO</th>
-              <th className='sticky resize-x overflow-auto'>PRECIO PROD.</th>
-              <th className='sticky resize-x overflow-auto'>FACTURA</th>
-              <th className='sticky resize-x overflow-auto'>CLIENTE</th>
-              <th className='sticky resize-x overflow-auto'>FECHA</th>
-              <th className='sticky bg-[#1e2124] w-fit'></th>
+          <thead className='bg-[#2d0080] border-b [&>*]:border-gray-500'>
+            <tr className='fadetext [&>th]:sticky [&>th]:overflow-auto [&>th]:resize-x'>
+              <th className='py-2 w-auto'>COD</th>
+              <th>USUARIO</th>
+              <th>PROVEEDOR</th>
+              <th>DESCRIPCION</th>
+              <th>QTY</th>
+              <th>MONTO PAGADO</th>
+              <th>PRECIO PROD.</th>
+              <th>FACTURA</th>
+              <th>CLIENTE</th>
+              <th>FECHA</th>
+              <th className='bg-[#1e2124] w-fit'></th>
             </tr>
           </thead>
           <tbody>
-            {tabla.map((item, index) => <tr className='whitespace-nowrap bg-[#1e2124] border-b border-gray-500 fadetext' key={index}>
-              <td className='py-2 border-gray-500 border-r w-auto'>{item.cod}</td>
-              <td className='border-gray-500 border-r'>{session.user}</td>
-              <td className='border-gray-500 border-r'>{item.prov}</td>
-              <td className='border-gray-500 border-r'>{item.desc}</td>
-              <td className='border-gray-500 border-r'>{item.cantidad}</td>
-              <td className='border-gray-500 border-r'>{item.monto}</td>
-              <td className='border-gray-500 border-r'>{item.precioProd}</td>
-              <td className='border-gray-500 border-r'>{item.fac}</td>
-              <td className='border-gray-500 border-r'>{item.cliente}</td>
-              <td className='border-gray-500 border-r'>{item.fecha.split('T')[0]}</td>
-              <td className='border-gray-500 border-r'><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
+            {tabla.map((item, index) => <tr className='whitespace-nowrap bg-[#1e2124] border-b [&>td]:border-gray-500 [&>td]:border-r fadetext' key={index}>
+              <td className='py-2 w-auto'>{item.cod}</td>
+              <td>{session.user}</td>
+              <td>{item.prov}</td>
+              <td>{item.desc}</td>
+              <td>{item.cantidad}</td>
+              <td>{item.monto}</td>
+              <td>{item.precioProd}</td>
+              <td>{item.fac}</td>
+              <td>{item.cliente}</td>
+              <td>{item.fecha.split('T')[0]}</td>
+              <td><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
                 handleRemoveItem(index);
                 axios.delete('/api/ventas', { data: { id: item.cod } }).then(() => toast.success(`Codigo: ${item.cod} Borrado`, {
                   iconTheme: {
@@ -227,13 +246,13 @@ export default function Ventas({ session, responseopt, responsecod }) {
         </table>
         <div className='m-3 comprastres justify-center flex'>
           <button className='text-white w-1/2 h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={facturaGen}>GENERAR FACTURA</button>
-          <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/ventastabla')}>VER TODOS</button>
+          <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/tables/ventastabla')}>VER TODOS</button>
         </div>
       </div>
       <div className="pagina" id="printext" >
         <p className="text-center">FERNANDO AGUILAR ZAPATA<br />Casa Matriz<br />AVENIDA BUENOS AIRES NRO. 930<br />Teléfono: 67067602<br />La Paz - Bolivia<br />FACTURA ORIGINAL</p>
         <hr />
-        <p className="text-center">NIT: 0000<br />Factura No.: 0000<br />Autorizacion No.: 0000</p>
+        <p className="text-center">NIT: 0000<br />Factura No.: {fac.fac}<br />Autorizacion No.: 0000</p>
         <hr />
         <p>Actividad Economica: (Actividad Economica)</p>
         <p className="float-left">Fecha: {sus}</p>

@@ -57,7 +57,7 @@ export default function Productos({ session, response }) {
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />
-        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">PRODUCTOS</p>
+        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">CATEGORIAS</p>
       </div>
       <table className='uno w-full text-white text-center h-fit'>
         <thead className='bg-[#2d0080] border-b border-gray-500'>

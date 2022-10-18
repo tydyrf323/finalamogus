@@ -46,7 +46,6 @@ export default function Compras({ session, responseopt, responsecod }) {
     number++;
     setTabla((prev) => [...prev, {
       fecha: codig.fecha,
-      fac: codig.fac,
       prov: codig.prov,
       cod: `${codig.cod}` + "-" + `${number}`,
       desc: codig.desc,
@@ -58,7 +57,6 @@ export default function Compras({ session, responseopt, responsecod }) {
     axios.post('/api/compraget', {
       IdUsuario: session.user,
       Fecha: codig.fecha,
-      Fac: codig.fac,
       IdProveedor: codig.prov,
       Codigo: `${codig.cod}` + "-" + `${number}`,
       Desc: codig.desc,
@@ -76,16 +74,12 @@ export default function Compras({ session, responseopt, responsecod }) {
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />
-        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">COMPRAS</p>
+        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">ENTRADAS</p>
       </div>
       <form className='comprasuno text-white comprasform fadetext' onSubmit={onsub} autoComplete='off'>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>FECHA:</p>
           <input type="date" name="fecha" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required value={codig.fecha} />
-        </div>
-        <div className='px-7 comprasform1'>
-          <p className='font-bold my-2'>FACTURA:</p>
-          <input type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='X11...' />
         </div>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>PROVEEDOR:</p>
@@ -111,6 +105,9 @@ export default function Compras({ session, responseopt, responsecod }) {
               <option value={item.producto} key={index}>{item.producto}</option>
             ))}
           </datalist>
+        </div>
+        <div className='m-3 comprasform1'>
+          <button className='w-full h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="reset">RESET</button>
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>MONTO TOTAL:</p>
@@ -140,33 +137,33 @@ export default function Compras({ session, responseopt, responsecod }) {
       </form>
       <table className='comprasdos w-full text-white text-center h-fit mt-3 overflow-y-scroll'>
         <thead className='bg-[#2d0080] border-b border-gray-500'>
-          <tr className='fadetext'>
-            <th className='sticky py-2 resize-x overflow-auto w-auto'>COD</th>
-            <th className='sticky resize-x overflow-auto'>USUARIO</th>
-            <th className='sticky resize-x overflow-auto'>PROVEEDOR</th>
-            <th className='sticky resize-x overflow-auto'>DESCRIPCION</th>
-            <th className='sticky resize-x overflow-auto'>QTY</th>
-            <th className='sticky resize-x overflow-auto'>MONTO TOTAL</th>
-            <th className='sticky resize-x overflow-auto'>PRECIO VENTA</th>
-            <th className='sticky resize-x overflow-auto'>FACTURA</th>
-            <th className='sticky resize-x overflow-auto'>FECHA</th>
-            <th className='sticky resize-x overflow-auto'>OBSERVACION</th>
-            <th className='sticky bg-[#1e2124] w-fit'></th>
+          <tr className='fadetext [&>*]:sticky [&>*]:overflow-auto [&>*]:resize-x'>
+            <th className='py-2 w-auto'>COD</th>
+            <th>USUARIO</th>
+            <th>PROVEEDOR</th>
+            <th>DESCRIPCION</th>
+            <th>QTY</th>
+            <th>MONTO TOTAL</th>
+            <th>PRECIO VENTA</th>
+            <th>FACTURA</th>
+            <th>FECHA</th>
+            <th>OBSERVACION</th>
+            <th className='bg-[#1e2124] w-fit'></th>
           </tr>
         </thead>
         <tbody>
-          {tabla.map((item, index) => <tr className='whitespace-nowrap bg-[#1e2124] border-b border-gray-500 fadetext' key={index}>
-            <td className='py-2 border-gray-500 border-r w-auto'>{item.cod}</td>
-            <td className='border-gray-500 border-r'>{session.user}</td>
-            <td className='border-gray-500 border-r'>{item.prov}</td>
-            <td className='border-gray-500 border-r'>{item.desc}</td>
-            <td className='border-gray-500 border-r'>{item.cantidad}</td>
-            <td className='border-gray-500 border-r'>{item.monto}</td>
-            <td className='border-gray-500 border-r'>{item.venta}</td>
-            <td className='border-gray-500 border-r'>{item.fac}</td>
-            <td className='border-gray-500 border-r'>{item.fecha.split('T')[0]}</td>
-            <td className='border-gray-500 border-r'>{item.obser}</td>
-            <td className='border-gray-500 border-r'><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
+          {tabla.map((item, index) => <tr className='whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r' key={index}>
+            <td className='py-2 w-auto'>{item.cod}</td>
+            <td>{session.user}</td>
+            <td>{item.prov}</td>
+            <td>{item.desc}</td>
+            <td>{item.cantidad}</td>
+            <td>{item.monto}</td>
+            <td>{item.venta}</td>
+            <td>{item.fac}</td>
+            <td>{item.fecha.split('T')[0]}</td>
+            <td>{item.obser}</td>
+            <td><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
               handleRemoveItem(index);
               axios.post('/api/delcompra', {
                 id: item.cod
@@ -181,7 +178,7 @@ export default function Compras({ session, responseopt, responsecod }) {
         </tbody>
       </table>
       <div className='m-3 comprastres justify-center flex z-10'>
-        <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/comprastabla')}>VER TODOS</button>
+        <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/tables/comprastabla')}>VER TODOS</button>
       </div>
     </div>
   )

@@ -11,8 +11,8 @@ function MyApp({ Component, pageProps }) {
     style: {
       border: '3px solid #8F02DF',
       fontWeight: 700,
-      background: 'black',
-      color: 'white'
+      background: '#FFBB00',
+      color: 'black'
     }
   }}/>
   </>

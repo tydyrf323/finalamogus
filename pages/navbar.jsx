@@ -10,7 +10,7 @@ export default function Navbar({ ses }) {
   const router = useRouter();
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
-  const salir = () => signOut({ callbackUrl: `/` })
+  const salir = async () => await signOut({ callbackUrl: `/` })
 
   return (
     <>
@@ -31,31 +31,34 @@ export default function Navbar({ ses }) {
               <FaUserAlt /><span>{ses.user}</span>
             </button>
           </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars' onClick={() => router.push('/dashboard')}>
-              <RiBarChart2Fill /><span>Dashboard</span>{/**/}
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars' onClick={() => router.push('/compra')}>
-              <RiHotelFill /><span>Compras</span>{/**/}
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars' onClick={() => router.push('/proveedores')}>
-              <RiInstallFill /><span>Proveedores</span>{/**/}
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars' onClick={() => router.push('/prods')}>
-              <AiFillShopping /><span>Productos</span> {/**/}
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars'>
-              <RiProfileFill /><span>Inventario</span> {/**/}
-            </button>
-          </li>
+          {ses.role === 0 && (
+            <>
+              <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+                <button className='menu-bars' onClick={() => router.push('/dashboard')}>
+                  <RiBarChart2Fill /><span>Dashboard</span>{/**/}
+                </button>
+              </li>
+              <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+                <button className='menu-bars' onClick={() => router.push('/compra')}>
+                  <RiHotelFill /><span>Compras</span>{/**/}
+                </button>
+              </li>
+              <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+                <button className='menu-bars' onClick={() => router.push('/proveedores')}>
+                  <RiInstallFill /><span>Proveedores</span>{/**/}
+                </button>
+              </li>
+              <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+                <button className='menu-bars' onClick={() => router.push('/prods')}>
+                  <AiFillShopping /><span>Productos</span> {/**/}
+                </button>
+              </li>
+              <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+                <button className='menu-bars' onClick={() => router.push('/inventario')}>
+                  <RiProfileFill /><span>Inventario</span> {/**/}
+                </button>
+              </li>
+            </>)}
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
             <button className='menu-bars' onClick={() => router.push('/ventas')}>
               <FaMoneyCheck /><span>Ventas</span>
@@ -64,11 +67,6 @@ export default function Navbar({ ses }) {
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
             <button className='menu-bars'>
               <RiMoneyDollarBoxLine /><span>Gastos</span>
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars'>
-              <RiProfileFill /><span>Reserva de Prod.</span>
             </button>
           </li>
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300">

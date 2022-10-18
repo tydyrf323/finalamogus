@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react';
 import Head from "next/head";
-import Navbar from "./navbar";
+import Navbar from "../navbar";
 
 export default function CompraTabla({ session, response }) {
   return (
@@ -10,7 +10,7 @@ export default function CompraTabla({ session, response }) {
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />
-        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">COMPRAS</p>
+        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">COMPRAS TABLA</p>
       </div>
       <table className='w-full text-white text-center h-fit'>
         <thead className='bg-[#2d0080] border-b border-gray-500'>
