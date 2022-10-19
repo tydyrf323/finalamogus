@@ -35,6 +35,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
     monto: '',
     cantidad: ''
   });
+  const clear = () => setTabla([]);
 
   const formChange = (event) => {
     let fieldName = event.target.getAttribute('name');
@@ -52,16 +53,16 @@ export default function Ventas({ session, responseopt, responsecod }) {
   }
 
   const blurred = async () => {
-    const venta = await axios.get('/api/ventablur', { params: { codigo: codig.cod } });
-    if (venta.data.length !== 0) {
+    const tienda = await axios.get('/api/ventablur', { params: { codigo: codig.cod, act: true } });
+    if (tienda.data.length !== 0) {
       setCodig((prev) => ({
         ...prev,
-        desc: venta.data[0].Descripcion,
-        prov: venta.data[0].IdProveedor,
-        precioProd: venta.data[0].PrecioVenta
+        desc: tienda.data[0].Descripcion,
+        prov: tienda.data[0].IdProveedor,
+        precioProd: tienda.data[0].PrecioDeVenta
       }))
     }
-    else toast.error("Codigo Inexistente.");
+    else toast.error("Codigo Inexistente en Tienda.");
   }
 
   function facturaGen() {
@@ -112,44 +113,49 @@ export default function Ventas({ session, responseopt, responsecod }) {
 
   async function onsub(e) {
     e.preventDefault();
-    const venta = await axios.get('/api/ventablur', { params: { codigo: codig.cod } });
-    if (venta.data.length !== 0) {
-      setTabla((prev) => [...prev, {
-        fecha: codig.fecha,
-        fac: codig.fac,
-        prov: codig.prov,
-        cod: codig.cod,
-        desc: codig.desc,
-        monto: codig.monto,
-        precioProd: codig.precioProd,
-        cantidad: codig.cantidad,
-        cliente: codig.cliente
-      }]);
-      axios.post('/api/ventas', {
-        IdUsuario: session.user,
-        Fecha: codig.fecha,
-        Fac: codig.fac,
-        IdProveedor: codig.prov,
-        Codigo: codig.cod,
-        Desc: codig.desc,
-        Monto: codig.monto,
-        Cantidad: codig.cantidad,
-        Precio: codig.precioProd,
-        cliente: codig.cliente
-      }).then(() => toast.success('Venta Añadida')).catch((e) => { console.log(e); toast.error('Error') });
+    if (codig.monto < codig.precioProd) toast.error("El monto pagado debe ser mayor al precio del articulo.");
+    else {
+      const venta = await axios.get('/api/ventablur', { params: { codigo: codig.cod, act: true } });
+      if (venta.data.length !== 0) {
+        axios.post('/api/ventas', {
+          IdUsuario: session.user,
+          Fecha: codig.fecha,
+          Fac: codig.fac,
+          IdProveedor: codig.prov,
+          Codigo: codig.cod,
+          Desc: codig.desc,
+          Monto: codig.monto,
+          Cantidad: codig.cantidad,
+          Precio: codig.precioProd,
+          cliente: codig.cliente
+        }).then(() => {
+          toast.success('Venta Añadida');
+          setTabla((prev) => [...prev, {
+            fecha: codig.fecha,
+            fac: codig.fac,
+            prov: codig.prov,
+            cod: codig.cod,
+            desc: codig.desc,
+            monto: codig.monto,
+            precioProd: codig.precioProd,
+            cantidad: codig.cantidad,
+            cliente: codig.cliente
+          }]);
+        }).catch(() => toast.error('Error: No se tiene stock disponible del articulo.'));
+      }
+      else toast.error("Codigo Inexistente.");
+      setCodig({
+        prov: responseopt[0].IdProveedor,
+        fecha: sus,
+        desc: '',
+        precioProd: 0,
+        cliente: '',
+        fac: '',
+        cod: '',
+        monto: '',
+        cantidad: ''
+      })
     }
-    else toast.error("Codigo Inexistente.");
-    setCodig({
-      prov: responseopt[0].IdProveedor,
-      fecha: sus,
-      desc: '',
-      precioProd: 0,
-      cliente: '',
-      fac: '',
-      cod: '',
-      monto: '',
-      cantidad: ''
-    })
   };
 
   return (
@@ -193,7 +199,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>PRECIO PROD.:</p>
-            <input type="number" name="precioProd" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.precioProd} disabled/>
+            <input type="number" name="precioProd" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.precioProd} disabled />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CANTIDAD:</p>
@@ -202,6 +208,9 @@ export default function Ventas({ session, responseopt, responsecod }) {
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CLIENTE:</p>
             <input type="text" name="cliente" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="Opcional..." onChange={formChange} value={codig.cliente} />
+          </div>
+          <div className='px-7 comprasform2'>
+            <button className='w-full h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' onClick={clear}>RESET</button>
           </div>
         </form>
         <table className='comprasdos w-full text-white text-center h-fit mt-3'>
@@ -285,7 +294,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
         <p className="float-left">Cancelado:</p>
         <p className="float-right">{fac.monto}</p><br />
         <p className="float-left">Cambio:</p>
-        <p className="float-right">{fac.monto - fac.total}</p><br />
+        <p className="float-right">{(fac.monto - fac.total).toFixed(1)}</p><br />
         <p>Son: {fac.num} {parseInt((fac.total % 1).toFixed(2).substring(2))}/100 BOLIVIANOS</p><br />
         <hr />
         <p className="text-justify"><b>"Esta factura contribuye al desarrollo del país el uso ilicito de esta sera sancionado de acuerdo a LEY"</b></p>
