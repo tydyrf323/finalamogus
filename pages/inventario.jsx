@@ -33,7 +33,15 @@ const ventasH = <>
   <th>MONTO PAGADO</th>
   <th>PRECIO PROD.</th>
   <th>FECHA</th>
-  <th>CLIENTE</th></>
+  <th>CLIENTE</th></>;
+const invH = <>
+  <th className="py-2 w-auto">COD.</th>
+  <th>PROVEEDOR</th>
+  <th>DESCRIPCION</th>
+  <th>STOCK</th>
+  <th>PRECIO PROD.</th>
+  <th>OBSERVACION</th>
+  <th>FECHA</th></>;
 
 export default function InvMain({ session, response }) {
 
@@ -60,7 +68,8 @@ export default function InvMain({ session, response }) {
       params: {
         tabla: invstate[0] === 'ENTRADAS' ? 'COMPRAS' : invstate[0],
         datos: event.currentTarget.getAttribute('name') === 'CODIGO' ? cod : desc,
-        dc: event.currentTarget.getAttribute('name')
+        dc: event.currentTarget.getAttribute('name'),
+        master: invstate[0] === 'MASTER'
       }
     });
     if (invstate[0] === 'ENTRADAS') {
@@ -89,21 +98,21 @@ export default function InvMain({ session, response }) {
     }
     else if (invstate[0] === 'VENTAS') {
       console.log(ventas);
-      if(ventas.agrupar) {
+      if (ventas.agrupar) {
         newtable.data = _(newtable.data)
-        .groupBy('Codigo')
-        .map((array, key) => ({
-          "Codigo": key,
-          "Cantidad": _.sumBy(array, "Cantidad"),
-          "Descripcion": _.uniqBy(array, "Descripcion").length,
-          "IdUsuario" : 'X',
-          "FacVenta": 'X',
-          "MontoPagado": 'X',
-          "PrecioProd": _.uniqBy(array, "PrecioProd").length,
-          "FechaVenta": 'X',
-          "Cliente": 'X'
-        }))
-        .value();
+          .groupBy('Codigo')
+          .map((array, key) => ({
+            "Codigo": key,
+            "Cantidad": _.sumBy(array, "Cantidad"),
+            "Descripcion": _.uniqBy(array, "Descripcion").length,
+            "IdUsuario": 'X',
+            "FacVenta": 'X',
+            "MontoPagado": 'X',
+            "PrecioProd": _.uniqBy(array, "PrecioProd").length,
+            "FechaVenta": 'X',
+            "Cliente": 'X'
+          }))
+          .value();
       }
       setInv(['VENTAS', ventasH, newtable.data.map((v, i) => <tr className="whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r text-center" key={i}>
         <td className='py-2 w-auto'>{v.Codigo}</td>
@@ -117,6 +126,31 @@ export default function InvMain({ session, response }) {
         <td>{v.Cliente}</td>
       </tr>)]);
     }
+    else if (invstate[0] === 'MASTER') {
+      setInv(['MASTER', invH, newtable.data.map((v, i) => <tr className="whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r text-center" key={i}>
+        <td className='py-2 w-auto'>{v.codigo}</td>
+        <td>{v.IdProveedor}</td>
+        <td>{v.Descripcion}</td>
+        <td>{v.Stock}</td>
+        <td>{v.precioVenta}</td>
+        <td>{v.observacion}</td>
+        <td>{v.FechaCompra.split('T')[0]}</td>
+      </tr>)]);
+    }
+  }
+
+  async function invMaster() {
+    const invMaster = await axios.get('/api/invmain');
+    setInv(['MASTER', invH, invMaster.data.map((v, i) => <tr className="whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r text-center" key={i}>
+      <td className='py-2 w-auto'>{v.codigo}</td>
+      <td>{v.IdProveedor}</td>
+      <td>{v.Descripcion}</td>
+      <td>{v.Stock}</td>
+      <td>{v.precioVenta}</td>
+      <td>{v.observacion}</td>
+      <td>{v.FechaCompra.split('T')[0]}</td>
+    </tr>)]);
+    setVentas({ agrupar: false, boton: true });
   }
 
   async function showVentas() {
@@ -176,11 +210,11 @@ export default function InvMain({ session, response }) {
     <section className='px-7 invOne'>
       <div className="invForm text-white">
         <div className="px-2 flex justify-center items-center">
-          <button name="CODIGO" className='w-[15%] border-4 flex justify-center items-center py-4 border-rose-400 rounded-full hover:bg-rose-800 transition ease-in-out duration-300' onClick={buscar}><FaSearch /></button>
+          <button name="CODIGO" className='w-[15%] border-4 flex justify-center items-center py-4 border-rose-400 rounded-lg hover:bg-rose-800 transition ease-in-out duration-300' onClick={buscar}><FaSearch /></button>
           <input type="text" name="cod" className='w-[85%] py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder='Buscar por Codigo...' onChange={search} />
         </div>
         <div className="px-2 flex justify-center items-center">
-          <button name="DESCRIPCION" className='w-[15%] border-4 flex justify-center items-center py-4 border-rose-400 rounded-full hover:bg-rose-800 transition ease-in-out duration-300' onClick={buscar}><FaSearch /></button>
+          <button name="DESCRIPCION" className='w-[15%] border-4 flex justify-center items-center py-4 border-rose-400 rounded-lg hover:bg-rose-800 transition ease-in-out duration-300' onClick={buscar}><FaSearch /></button>
           <input type="text" name="desc" className='w-[85%] py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder='Buscar por Descripcion...' onChange={searchDesc} />
         </div>
         <div className="px-2 flex justify-center items-center">
@@ -188,13 +222,13 @@ export default function InvMain({ session, response }) {
             <label className="container">
               <input type="checkbox" onChange={() => setVentas((prev) => ({
                 ...prev,
-                  agrupar: !ventas.agrupar
+                agrupar: !ventas.agrupar
               }))} />
               <span className="checkmark"></span>
             </label></>}
         </div>
         <div className="px-2 flex justify-center items-center">
-          <button className='w-full h-1/2 border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out duration-300 font-black' onClick={cambiar}>INVENTARIO MASTER</button>
+          <button className='w-full h-1/2 border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out duration-300 font-black' onClick={invMaster}>INVENTARIO MASTER</button>
         </div>
         <div className="px-2 flex justify-center items-center">
           <button className='w-full h-1/2 border-4 border-indigo-300 rounded-full hover:bg-indigo-800 transition ease-in-out duration-300 font-black' onClick={cambiar}>MOSTRAR {invstate[0] === 'TIENDA' ? 'ENTRADAS' : 'TIENDA'}</button>

@@ -1,7 +1,7 @@
 import { FaBars, FaUserAlt, FaMoneyCheck, FaSignOutAlt, FaStoreAlt } from 'react-icons/fa';
 import { AiOutlineClose, AiFillShopping } from 'react-icons/ai';
 import { useState } from 'react';
-import { RiMoneyDollarBoxLine, RiBarChart2Fill, RiHotelFill, RiProfileFill, RiInstallFill } from 'react-icons/ri';
+import { RiBarChart2Fill, RiHotelFill, RiProfileFill, RiInstallFill } from 'react-icons/ri';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 
@@ -26,13 +26,13 @@ export default function Navbar({ ses }) {
               <AiOutlineClose color='#FFF' />
             </button>
           </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars'>
-              <FaUserAlt /><span>{ses.user}</span>
-            </button>
-          </li>
           {ses.role === 0 && (
             <>
+              <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
+                <button className='menu-bars' onClick={() => router.push('/home')}>
+                  <FaUserAlt /><span>{ses.user}</span>
+                </button>
+              </li>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
                 <button className='menu-bars' onClick={() => router.push('/dashboard')}>
                   <RiBarChart2Fill /><span>Dashboard</span>
@@ -45,7 +45,7 @@ export default function Navbar({ ses }) {
               </li>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
                 <button className='menu-bars' onClick={() => router.push('/tienda')}>
-                  <FaStoreAlt /><span>Tienda</span>
+                  <FaStoreAlt /><span>Asig. Tienda</span>
                 </button>
               </li>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">

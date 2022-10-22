@@ -77,7 +77,7 @@ export default function Tienda({ session }) {
       </Head>
       <div className="w-full bg-[#060b26] title">
         <Navbar ses={session} />
-        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">TIENDA</p>
+        <p className="italic font-bold text-white text-center py-3 text-3xl fadetext">ASIGNAR TIENDA</p>
       </div>
       <form className='comprasuno text-white tiendaform fadetext' onSubmit={onsub} autoComplete='off'>
         <div className='px-7 comprasform1'>

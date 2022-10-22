@@ -11,10 +11,9 @@ const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
 
-export default function Compras({ session, responseopt, responsecod }) {
+export default function Compras({ session, responseopt, responsecod, miscresp }) {
 
   const [tabla, setTabla] = useState([]);
-  const router = useRouter();
   const [codig, setCodig] = useState({
     prov: responseopt[0].IdProveedor,
     fecha: sus,
@@ -107,20 +106,20 @@ export default function Compras({ session, responseopt, responsecod }) {
           </datalist>
         </div>
         <div className='m-3 comprasform1'>
-          <button className='w-full h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="reset">RESET</button>
+          <button className='w-full h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="reset">VACIAR</button>
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>MONTO TOTAL:</p>
           <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={(e) => {
             formChange(e);
-            setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + 0.3)) / (1 - 0.13)) }))
+            setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + (miscresp[0].porcentaje / 100))) / (1 - 0.13)) }))
           }} required value={codig.monto} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>CANTIDAD:</p>
           <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={(e) => {
             formChange(e);
-            setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + 0.3)) / (1 - 0.13)) }))
+            setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + (miscresp[0].porcentaje / 100))) / (1 - 0.13)) }))
           }} required value={codig.cantidad} />
         </div>
         <div className='px-7 comprasform2'>
@@ -188,8 +187,10 @@ export async function getServerSideProps(context) {
   else {
     const respopt = await fetch('http://192.168.3.4:3000/api/provget');
     const respcod = await fetch('http://192.168.3.4:3000/api/prod', { method: 'GET' });
+    const misc = await fetch('http://192.168.3.4:3000/api/misc', { method: 'GET' });
     const responseopt = await respopt.json();
     const responsecod = await respcod.json();
-    return { props: { session, responseopt, responsecod } };
+    const miscresp = await misc.json();
+    return { props: { session, responseopt, responsecod, miscresp } };
   }
 }
