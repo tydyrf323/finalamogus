@@ -111,7 +111,7 @@ span {
     width: 100%;
     height: 99vh;
     display: grid;
-    grid-template-rows: 70px calc(90% - 70px) 10%;
+    grid-template-rows: 70px calc(100% - 170px) 100px;
 }
 
 .uno {

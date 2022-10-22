@@ -12,7 +12,7 @@ import { numeroALetras } from '../src/numeroAletra';
 const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-export default function Ventas({ session, responseopt, responsecod }) {
+export default function Ventas({ session, responseopt }) {
 
   const [tabla, setTabla] = useState([]);
   const [fac, setFac] = useState({
@@ -21,9 +21,9 @@ export default function Ventas({ session, responseopt, responsecod }) {
     datos: [],
     total: 0,
     monto: 0,
-    fac: ''
+    fac: '',
+    nit: ''
   });
-  const router = useRouter();
   const [codig, setCodig] = useState({
     prov: responseopt[0].IdProveedor,
     fecha: sus,
@@ -33,7 +33,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
     fac: '',
     cod: '',
     monto: '',
-    cantidad: ''
+    cantidad: '',
+    nit: ''
   });
   const clear = () => setTabla([]);
 
@@ -89,31 +90,32 @@ export default function Ventas({ session, responseopt, responsecod }) {
       for (const { precioProd } of tabla) {
         let x = Number(precioProd);
         sum += x;
-        console.log(sum);
       }
       for (const { monto } of tabla) {
         let x = Number(monto)
         cancelado += x;
-        console.log(x);
       }
-      const today = DateTime.now();
+      const today = DateTime.now(); 
+      console.log(codig.nit);
       setFac({
         num: `${numeroALetras(sum)}`,
         time: today.hour + ":" + today.minute + ":" + today.second,
         datos: unique,
         total: sum,
         monto: cancelado,
-        fac: codig.fac
+        fac: unique[0].fac,
+        nit: unique[0].nit
       })
       setTimeout(() => {
         window.print();
       }, 500);
+      clear();
     }
   }
 
   async function onsub(e) {
     e.preventDefault();
-    if (codig.monto < codig.precioProd) toast.error("El monto pagado debe ser mayor al precio del articulo.");
+    if (Number(codig.monto) < Number(codig.precioProd)) toast.error("El monto pagado debe ser mayor al precio del articulo.");
     else {
       const venta = await axios.get('/api/ventablur', { params: { codigo: codig.cod, act: true } });
       if (venta.data.length !== 0) {
@@ -139,7 +141,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
             monto: codig.monto,
             precioProd: codig.precioProd,
             cantidad: codig.cantidad,
-            cliente: codig.cliente
+            cliente: codig.cliente,
+            nit: codig.nit
           }]);
         }).catch(() => toast.error('Error: No se tiene stock disponible del articulo.'));
       }
@@ -153,7 +156,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
         fac: '',
         cod: '',
         monto: '',
-        cantidad: ''
+        cantidad: '',
+        nit: ''
       })
     }
   };
@@ -183,12 +187,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>DESCRIPCION:</p>
-            <input type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Descripcion...' onChange={formChange} value={codig.desc} />
-            <datalist id="desc">
-              {responsecod.map((item, index) => (
-                <option value={item.producto} key={index}>{item.producto}</option>
-              ))}
-            </datalist>
+            <input type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-fuchsia-900 cursor-not-allowed px-4' required placeholder='Descripcion...' onChange={formChange} value={codig.desc} disabled />
           </div>
           <div className='m-3 comprasform1'>
             <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
@@ -199,7 +198,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>PRECIO PROD.:</p>
-            <input type="number" name="precioProd" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.precioProd} disabled />
+            <input type="number" name="precioProd" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-fuchsia-900 cursor-not-allowed px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.precioProd} disabled />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CANTIDAD:</p>
@@ -210,7 +209,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
             <input type="text" name="cliente" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="Opcional..." onChange={formChange} value={codig.cliente} />
           </div>
           <div className='px-7 comprasform2'>
-            <button className='w-full h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' onClick={clear}>RESET</button>
+            <p className='font-bold my-2'>NIT/CI:</p>
+            <input type="text" name="nit" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="..." onChange={formChange} value={codig.nit} required />
           </div>
         </form>
         <table className='comprasdos w-full text-white text-center h-fit mt-3'>
@@ -226,6 +226,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
               <th>FACTURA</th>
               <th>CLIENTE</th>
               <th>FECHA</th>
+              <th>NIT/CI</th>
               <th className='bg-[#1e2124] w-fit'></th>
             </tr>
           </thead>
@@ -241,6 +242,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
               <td>{item.fac}</td>
               <td>{item.cliente}</td>
               <td>{item.fecha.split('T')[0]}</td>
+              <td>{item.nit}</td>
               <td><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
                 handleRemoveItem(index);
                 axios.delete('/api/ventas', { data: { id: item.cod } }).then(() => toast.success(`Codigo: ${item.cod} Borrado`, {
@@ -254,8 +256,8 @@ export default function Ventas({ session, responseopt, responsecod }) {
           </tbody>
         </table>
         <div className='m-3 comprastres justify-center flex'>
-          <button className='text-white w-1/2 h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={facturaGen}>GENERAR FACTURA</button>
-          <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/tables/ventastabla')}>VER TODOS</button>
+          <button className='text-white w-full h-full border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={facturaGen}>GENERAR FACTURA</button>
+          <button className='text-white w-full h-full border-4 border-indigo-400 rounded-full hover:bg-indigo-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' onClick={clear}>VACIAR</button>
         </div>
       </div>
       <div className="pagina" id="printext" >
@@ -267,7 +269,7 @@ export default function Ventas({ session, responseopt, responsecod }) {
         <p className="float-left">Fecha: {sus}</p>
         <p className="float-right">Hora: {fac.time}</p><br />
         <p>Señor(es):{fac.datos.map((v, i) => (<span key={i}>{v.cliente}.</span>))}</p>
-        <p>NIT/CI: 0</p>
+        <p>NIT/CI: {fac.nit}</p>
         <hr />
         <table style={{ borderBottom: '1px solid black', borderCollapse: "collapse" }}>
           <thead style={{ borderBottom: '1px solid black' }}>
@@ -312,9 +314,7 @@ export async function getServerSideProps(context) {
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const respopt = await fetch('http://192.168.3.4:3000/api/provget');
-    const respcod = await fetch('http://192.168.3.4:3000/api/prod', { method: 'GET' });
     const responseopt = await respopt.json();
-    const responsecod = await respcod.json();
-    return { props: { session, responseopt, responsecod } };
+    return { props: { session, responseopt } };
   }
 } 

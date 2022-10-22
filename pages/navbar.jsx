@@ -10,7 +10,7 @@ export default function Navbar({ ses }) {
   const router = useRouter();
   const [sidebar, setSidebar] = useState(false);
   const showSidebar = () => setSidebar(!sidebar);
-  const salir = async () => await signOut({ callbackUrl: `/` })
+  const salir = async () => await signOut({ callbackUrl: '/' })
 
   return (
     <>
@@ -49,13 +49,13 @@ export default function Navbar({ ses }) {
                 </button>
               </li>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-                <button className='menu-bars' onClick={() => router.push('/proveedores')}>
-                  <RiInstallFill /><span>Proveedores</span>
+                <button className='menu-bars' onClick={() => router.push('/prods')}>
+                  <AiFillShopping /><span>Categorias</span> {/**/}
                 </button>
               </li>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-                <button className='menu-bars' onClick={() => router.push('/prods')}>
-                  <AiFillShopping /><span>Productos</span> {/**/}
+                <button className='menu-bars' onClick={() => router.push('/proveedores')}>
+                  <RiInstallFill /><span>Proveedores</span>
                 </button>
               </li>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
@@ -67,11 +67,6 @@ export default function Navbar({ ses }) {
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
             <button className='menu-bars' onClick={() => router.push('/ventas')}>
               <FaMoneyCheck /><span>Ventas</span>
-            </button>
-          </li>
-          <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
-            <button className='menu-bars'>
-              <RiMoneyDollarBoxLine /><span>Gastos</span>
             </button>
           </li>
           <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-red-500 duration-300">

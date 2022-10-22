@@ -2,7 +2,14 @@
     width: 100%;
     height: 99vh;
     display: grid;
-    grid-template-rows: 70px 20% calc(70% - 70px) 10%;
+    grid-template-rows: 70px 230px calc(100% - 390px) 90px;
+}
+
+.compras1 {
+    width: 100%;
+    height: 99vh;
+    display: grid;
+    grid-template-rows: 70px 230px calc(100% - 300px);
 }
 
 .comprasform {

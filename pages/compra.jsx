@@ -68,7 +68,7 @@ export default function Compras({ session, responseopt, responsecod }) {
   };
 
   return (
-    <div className='compras'>
+    <div className='compras1'>
       <Head>
         <title>ENTRADAS</title>
       </Head>
@@ -177,9 +177,6 @@ export default function Compras({ session, responseopt, responsecod }) {
           </tr>)}
         </tbody>
       </table>
-      <div className='m-3 comprastres justify-center flex z-10'>
-        <button className='text-white w-1/2 h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit" onClick={() => router.push('/tables/comprastabla')}>VER TODOS</button>
-      </div>
     </div>
   )
 }

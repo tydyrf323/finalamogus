@@ -194,10 +194,10 @@ export default function InvMain({ session, response }) {
             </label></>}
         </div>
         <div className="px-2 flex justify-center items-center">
-          <button className='w-full h-1/2 border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' onClick={cambiar}>INVENTARIO MASTER</button>
+          <button className='w-full h-1/2 border-4 border-yellow-400 rounded-full hover:bg-yellow-800 transition ease-in-out duration-300 font-black' onClick={cambiar}>INVENTARIO MASTER</button>
         </div>
         <div className="px-2 flex justify-center items-center">
-          <button className='w-full h-1/2 border-4 border-indigo-300 rounded-full hover:bg-indigo-800 transition ease-in-out hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' onClick={cambiar}>MOSTRAR {invstate[0] === 'TIENDA' ? 'ENTRADAS' : 'TIENDA'}</button>
+          <button className='w-full h-1/2 border-4 border-indigo-300 rounded-full hover:bg-indigo-800 transition ease-in-out duration-300 font-black' onClick={cambiar}>MOSTRAR {invstate[0] === 'TIENDA' ? 'ENTRADAS' : 'TIENDA'}</button>
         </div>
       </div>
     </section>
