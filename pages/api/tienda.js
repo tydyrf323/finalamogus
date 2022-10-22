@@ -25,4 +25,14 @@ export default async function tiendaController(req, res) {
             res.send(error);
         }
     }
+    else if (req.method === 'GET') {
+        try {
+            const [rows] = await pool.query("SELECT * FROM tienda;");
+            res.json(rows);
+        } catch (error) {
+            console.log(error);
+            res.status(500);
+            res.send(error);
+        }
+    }
 }
