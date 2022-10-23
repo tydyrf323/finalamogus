@@ -78,7 +78,7 @@ export default function Home({ session }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session) return { redirect: { destination: '/unauth', permanent: false } };
+  if (!session || session.role === 1) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     return { props: { session } };
   }

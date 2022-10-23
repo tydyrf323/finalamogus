@@ -15,7 +15,7 @@ export default function SignIn() {
     const verificar = async () => {
       getSession().then((ses) => {
         setLoad(true);
-        if (ses) {
+        if (ses !== null) {
           if (ses.role === 0) router.push('/dashboard');
           else router.push('/ventas');
         }
@@ -25,14 +25,18 @@ export default function SignIn() {
   }, []);
   const handleSubmit = async e => {
     e.preventDefault();
-    const login = await signIn("credentials", { usrname: user, pwd: password, redirect: false })
+    const login = await signIn("credentials", { usrname: user, pwd: password, redirect: false });
     if (login.status !== 200) {
       toast.error("Usuario o Contraseña incorrectos");
       setUser('');
       setPassword('');
       userRef.current.focus();
     }
-    else router.push('/dashboard');
+    else {
+      const rol = await getSession();
+      if(rol.role === 0) router.push('/dashboard');
+      else router.push('/ventas');
+    }
   }
 
   return (

@@ -178,7 +178,7 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session) return { redirect: { destination: '/unauth', permanent: false } };
+  if (!session || session.role === 1) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const respopt = await fetch('http://192.168.3.4:3000/api/provget');
     const respcod = await fetch('http://192.168.3.4:3000/api/prod', { method: 'GET' });

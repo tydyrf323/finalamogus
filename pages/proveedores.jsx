@@ -96,7 +96,7 @@ export default function Proveedores({ session, response }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  if (!session) return { redirect: { destination: '/unauth', permanent: false } };
+  if (!session || session.role === 1) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const resp = await fetch('http://192.168.3.4:3000/api/provget');
     const response = await resp.json();
