@@ -44,7 +44,6 @@ const invH = <>
   <th>FECHA</th></>;
 
 export default function InvMain({ session, response }) {
-
   const [invstate, setInv] = useState(['TIENDA', tiendaH, response.map((v, i) => <tr className="whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r text-center" key={i}>
     <td className='py-2 w-auto'>{v.Codigo}</td>
     <td>{v.IdProveedor}</td>
@@ -69,7 +68,8 @@ export default function InvMain({ session, response }) {
         tabla: invstate[0] === 'ENTRADAS' ? 'COMPRAS' : invstate[0],
         datos: event.currentTarget.getAttribute('name') === 'CODIGO' ? cod : desc,
         dc: event.currentTarget.getAttribute('name'),
-        master: invstate[0] === 'MASTER'
+        master: invstate[0] === 'MASTER',
+        u: false
       }
     });
     if (invstate[0] === 'ENTRADAS') {
@@ -139,7 +139,14 @@ export default function InvMain({ session, response }) {
   }
 
   async function invMaster() {
-    const invMaster = await axios.get('/api/invmain');
+    const invMaster = await axios.get('/api/inv', {
+      params: {
+        tabla: '',
+        datos: '',
+        dc: 'codigo',
+        master: true
+      }
+    });
     setInv(['MASTER', invH, invMaster.data.map((v, i) => <tr className="whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r text-center" key={i}>
       <td className='py-2 w-auto'>{v.codigo}</td>
       <td>{v.IdProveedor}</td>
