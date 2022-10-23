@@ -3,7 +3,7 @@ export default async function getCompra(req, res) {
     if (req.method === 'POST') {
         try {
             let { IdUsuario, Codigo, IdProveedor, Desc, Cantidad, Monto, Precio, Obser, Fecha } = req.body;
-            await pool.query("INSERT INTO compras(Codigo, IdUsuario, IdProveedor, Descripcion, Cantidad, MontoTotal, PrecioVenta, Localizacion, Observacion, FechaCompra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [Codigo, IdUsuario, IdProveedor, Desc, Cantidad, Monto, Precio, 0, Obser, Fecha]);
+            await pool.query("INSERT INTO compras(Codigo, IdUsuario, IdProveedor, Descripcion, Cantidad, MontoTotal, PrecioVenta, Observacion, FechaCompra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", [Codigo, IdUsuario, IdProveedor, Desc, Cantidad, Monto, Precio, Obser, Fecha]);
             res.status(200).end();
         } catch (error) {
             console.log(error);

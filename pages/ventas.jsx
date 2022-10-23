@@ -2,7 +2,6 @@ import { getSession } from 'next-auth/react';
 import { useState } from "react";
 import { toast } from 'react-hot-toast';
 import { FiTrash2 } from 'react-icons/fi';
-import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
@@ -12,8 +11,7 @@ import { numeroALetras } from '../src/numeroAletra';
 const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-export default function Ventas({ session, responseopt }) {
-
+export default function Ventas({ session, responseopt, miscresp }) {
   const [tabla, setTabla] = useState([]);
   const [fac, setFac] = useState({
     num: '',
@@ -96,7 +94,6 @@ export default function Ventas({ session, responseopt }) {
         cancelado += x;
       }
       const today = DateTime.now(); 
-      console.log(codig.nit);
       setFac({
         num: `${numeroALetras(sum)}`,
         time: today.hour + ":" + today.minute + ":" + today.second,
@@ -261,11 +258,11 @@ export default function Ventas({ session, responseopt }) {
         </div>
       </div>
       <div className="pagina" id="printext" >
-        <p className="text-center">FERNANDO AGUILAR ZAPATA<br />Casa Matriz<br />AVENIDA BUENOS AIRES NRO. 930<br />Teléfono: 67067602<br />La Paz - Bolivia<br />FACTURA ORIGINAL</p>
+        <p className="text-center">{miscresp[0].nombre}<br />Casa Matriz<br />{miscresp[0].calle}<br />Teléfono: {miscresp[0].telf}<br />La Paz - Bolivia<br />FACTURA ORIGINAL</p>
         <hr />
-        <p className="text-center">NIT: 0000<br />Factura No.: {fac.fac}<br />Autorizacion No.: 0000</p>
+        <p className="text-center">NIT: {miscresp[0].nit}<br />Factura No.: {fac.fac}<br />Autorizacion No.: 0000</p>
         <hr />
-        <p>Actividad Economica: (Actividad Economica)</p>
+        <p>Actividad Economica: {miscresp[0].actividad}</p>
         <p className="float-left">Fecha: {sus}</p>
         <p className="float-right">Hora: {fac.time}</p><br />
         <p>Señor(es):{fac.datos.map((v, i) => (<span key={i}>{v.cliente}.</span>))}</p>
@@ -314,7 +311,9 @@ export async function getServerSideProps(context) {
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const respopt = await fetch('http://192.168.3.4:3000/api/provget');
+    const misc = await fetch('http://192.168.3.4:3000/api/misc', { method: 'GET' });
     const responseopt = await respopt.json();
-    return { props: { session, responseopt } };
+    const miscresp = await misc.json();
+    return { props: { session, responseopt, miscresp } };
   }
 } 

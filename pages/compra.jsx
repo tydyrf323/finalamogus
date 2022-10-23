@@ -2,7 +2,6 @@ import { getSession } from 'next-auth/react';
 import { useState } from "react";
 import { toast } from 'react-hot-toast';
 import { FiTrash2 } from 'react-icons/fi';
-import { useRouter } from 'next/router';
 import axios from 'axios';
 import Head from "next/head";
 import Navbar from "./navbar";
@@ -144,7 +143,6 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
             <th>QTY</th>
             <th>MONTO TOTAL</th>
             <th>PRECIO VENTA</th>
-            <th>FACTURA</th>
             <th>FECHA</th>
             <th>OBSERVACION</th>
             <th className='bg-[#1e2124] w-fit'></th>
@@ -159,7 +157,6 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
             <td>{item.cantidad}</td>
             <td>{item.monto}</td>
             <td>{item.venta}</td>
-            <td>{item.fac}</td>
             <td>{item.fecha.split('T')[0]}</td>
             <td>{item.obser}</td>
             <td><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {

@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import '../styles/compras.css'
 import '../styles/imprimir.css'
 import '../styles/invmain.css'
+import '../styles/dashboard.css'
 import { Toaster } from 'react-hot-toast'
 
 function MyApp({ Component, pageProps }) {
