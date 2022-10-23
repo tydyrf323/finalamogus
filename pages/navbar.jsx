@@ -26,7 +26,7 @@ export default function Navbar({ ses }) {
               <AiOutlineClose color='#FFF' />
             </button>
           </li>
-          {ses.role === 0 && (
+          {ses?.role === 0 && (
             <>
               <li className="navbar-toggle nav-text transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300">
                 <button className='menu-bars' onClick={() => router.push('/home')}>
