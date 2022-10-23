@@ -295,7 +295,7 @@ export default function Ventas({ session, responseopt, miscresp }) {
         <p className="float-right">{(fac.monto - fac.total).toFixed(1)}</p><br />
         <p>Son: {fac.num} {parseInt((fac.total % 1).toFixed(2).substring(2))}/100 BOLIVIANOS</p><br />
         <hr />
-        <p className="text-justify"><b>"Esta factura contribuye al desarrollo del país el uso ilicito de esta sera sancionado de acuerdo a LEY"</b></p>
+        <p className="text-justify"><b>&quot;Esta factura contribuye al desarrollo del país el uso ilicito de esta sera sancionado de acuerdo a LEY&quot;</b></p>
         <hr />
         <p className="text-justify">Ley Nº 453: El proveedor debe brindar atención sin discriminacion, con respeto, calidez y cordialidad a los usuarios y consumidores.</p>
         <hr />
