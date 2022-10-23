@@ -20,7 +20,8 @@ export default function Ventas({ session, responseopt, miscresp }) {
     total: 0,
     monto: 0,
     fac: '',
-    nit: ''
+    nit: '',
+    tabla: []
   });
   const [codig, setCodig] = useState({
     prov: responseopt[0].IdProveedor,
@@ -100,7 +101,8 @@ export default function Ventas({ session, responseopt, miscresp }) {
         total: sum,
         monto: cancelado,
         fac: unique[0].fac,
-        nit: unique[0].nit
+        nit: unique[0].nit,
+        tabla: tabla
       })
       setTimeout(() => {
         window.print();
@@ -277,7 +279,7 @@ export default function Ventas({ session, responseopt, miscresp }) {
             </tr>
           </thead>
           <tbody>
-            {tabla.map((obj, index) => (
+            {fac.tabla.map((obj, index) => (
               <tr key={index}>
                 <td>{obj.cantidad}</td>
                 <td>{obj.cod}</td>
