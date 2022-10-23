@@ -42,7 +42,6 @@ export default function Ventas({ session, responseopt, miscresp }) {
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
-    console.log(codig);
   }
 
   const handleRemoveItem = idx => {

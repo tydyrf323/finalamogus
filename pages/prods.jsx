@@ -22,7 +22,6 @@ export default function Productos({ session, response }) {
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
-    console.log(codig);
   }
 
   const blurred = () => {
@@ -110,7 +109,6 @@ export default function Productos({ session, response }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  console.log(session);
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const resp = await fetch('http://192.168.3.4:3000/api/prod');

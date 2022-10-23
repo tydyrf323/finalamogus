@@ -28,7 +28,6 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
-    console.log(codig);
   }
 
   const handleRemoveItem = idx => {
@@ -62,7 +61,7 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
       Cantidad: codig.cantidad,
       Precio: codig.venta,
       Obser: codig.obser
-    }).then(() => toast.success('Compra Añadida')).catch((e) => { console.log(e); toast.error('Error') });
+    }).then(() => toast.success('Compra Añadida')).catch((e) => toast.error('Error') );
   };
 
   return (
@@ -179,7 +178,6 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  console.log(session);
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const respopt = await fetch('http://192.168.3.4:3000/api/provget');

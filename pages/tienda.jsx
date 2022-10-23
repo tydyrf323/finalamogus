@@ -21,7 +21,6 @@ export default function Tienda({ session }) {
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
-    console.log(codig);
   }
 
   const handleRemoveItem = idx => {
@@ -142,7 +141,6 @@ export default function Tienda({ session }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  console.log(session);
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     return { props: { session } };

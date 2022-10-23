@@ -165,7 +165,6 @@ export default function Dashboard({ session, pieresp }) {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  console.log(session);
   if (!session) return { redirect: { destination: '/unauth', permanent: false } };
   else {
     const pie = await fetch('http://192.168.3.4:3000/api/dashboard', { method: 'GET' });

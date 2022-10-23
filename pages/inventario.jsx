@@ -60,7 +60,7 @@ export default function InvMain({ session, response }) {
     agrupar: false,
     boton: true
   });
-  const search = (e) => { setCod(e.target.value); console.log(cod); }
+  const search = (e) => setCod(e.target.value);
   const searchDesc = (e) => setDesc(e.target.value);
 
   async function buscar(event) {
@@ -97,7 +97,6 @@ export default function InvMain({ session, response }) {
       </tr>)]);
     }
     else if (invstate[0] === 'VENTAS') {
-      console.log(ventas);
       if (ventas.agrupar) {
         newtable.data = _(newtable.data)
           .groupBy('Codigo')
