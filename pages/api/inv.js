@@ -2,7 +2,7 @@ import { pool } from "../../src/database";
 export default async function invController(req, res) {
     let { tabla, datos, dc, master } = req.query;
     try {
-        if (master) {
+        if (master === 'yes') {
             const [rows] = await pool.query(`SELECT compras.codigo, compras.IdProveedor, compras.Descripcion, (IFNULL(tienda.qty, 0) + compras.cantidad) as 'Stock', compras.precioVenta, compras.observacion, compras.FechaCompra from compras LEFT JOIN tienda ON compras.codigo = tienda.codigo WHERE compras.${dc} like '${datos}%';`);
             return res.json(rows);
         }

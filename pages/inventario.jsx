@@ -68,8 +68,7 @@ export default function InvMain({ session, response }) {
         tabla: invstate[0] === 'ENTRADAS' ? 'COMPRAS' : invstate[0],
         datos: event.currentTarget.getAttribute('name') === 'CODIGO' ? cod : desc,
         dc: event.currentTarget.getAttribute('name'),
-        master: invstate[0] === 'MASTER',
-        u: false
+        master: invstate[0] === 'MASTER' ? 'yes' : 'no'
       }
     });
     if (invstate[0] === 'ENTRADAS') {
@@ -144,7 +143,7 @@ export default function InvMain({ session, response }) {
         tabla: '',
         datos: '',
         dc: 'codigo',
-        master: true
+        master: 'yes'
       }
     });
     setInv(['MASTER', invH, invMaster.data.map((v, i) => <tr className="whitespace-nowrap bg-[#1e2124] border-b [&>*]:border-gray-500 fadetext [&>*]:border-r text-center" key={i}>

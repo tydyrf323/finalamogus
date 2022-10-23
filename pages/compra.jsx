@@ -14,9 +14,9 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
 
   const [tabla, setTabla] = useState([]);
   const [codig, setCodig] = useState({
-    prov: responseopt[0].IdProveedor,
+    prov: responseopt[0]?.IdProveedor,
     fecha: sus,
-    cod: responsecod[0].codigo,
+    cod: responsecod[0]?.codigo,
     cantidad: 1,
     monto: 1,
     venta: 0
