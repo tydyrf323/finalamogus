@@ -15,7 +15,10 @@ export default function SignIn() {
     const verificar = async () => {
       getSession().then((ses) => {
         setLoad(true);
-        if (ses) router.push('/dashboard');
+        if (ses) {
+          if (ses.role === 0) router.push('/dashboard');
+          else router.push('/ventas');
+        }
       })
     }
     verificar();
