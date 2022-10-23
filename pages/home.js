@@ -2,13 +2,11 @@ import Navbar from "./navbar";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { FaSave } from 'react-icons/fa'
-import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
 export default function Home({ session }) {
   
-  const [datos, setData] = useState({});
   function subir(e) {
     const x = document.getElementById(e.currentTarget.getAttribute('name')).value;
     axios.post('/api/misc', {
