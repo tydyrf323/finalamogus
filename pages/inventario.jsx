@@ -102,11 +102,11 @@ export default function InvMain({ session, response }) {
           .map((array, key) => ({
             "Codigo": key,
             "Cantidad": _.sumBy(array, "Cantidad"),
-            "Descripcion": _.uniqBy(array, "Descripcion").length,
+            "Descripcion": array[0].Descripcion,
             "IdUsuario": 'X',
             "FacVenta": 'X',
             "MontoPagado": 'X',
-            "PrecioProd": _.uniqBy(array, "PrecioProd").length,
+            "PrecioProd": array[0].PrecioProd,
             "FechaVenta": 'X',
             "Cliente": 'X'
           }))
