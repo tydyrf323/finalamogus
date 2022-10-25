@@ -1,47 +1,12 @@
 import { getSession } from "next-auth/react";
 import Navbar from "./navbar";
-import {
-  Chart,
-  ArcElement,
-  LineElement,
-  BarElement,
-  PointElement,
-  BarController,
-  PieController,
-  CategoryScale,
-  LinearScale,
-  LogarithmicScale,
-  RadialLinearScale,
-  Decimation,
-  Filler,
-  Legend,
-  Title,
-  Tooltip,
-  SubTitle
-} from 'chart.js';
+import { Chart, ArcElement, LineElement, BarElement, PointElement, BarController, PieController, CategoryScale, LinearScale, LogarithmicScale, RadialLinearScale, Decimation, Filler, Legend, Title, Tooltip, SubTitle } from 'chart.js';
 import Head from "next/head";
 import { Bar, Pie } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { DateTime } from 'luxon';
 import { useState, useEffect } from "react";
-Chart.register(
-  ArcElement,
-  LineElement,
-  BarElement,
-  PointElement,
-  BarController,
-  PieController,
-  CategoryScale,
-  LinearScale,
-  LogarithmicScale,
-  RadialLinearScale,
-  Decimation,
-  Filler,
-  Legend,
-  Title,
-  Tooltip,
-  SubTitle
-);
+Chart.register(ArcElement, LineElement, BarElement, PointElement, BarController, PieController, CategoryScale, LinearScale, LogarithmicScale, RadialLinearScale, Decimation, Filler, Legend, Title, Tooltip, SubTitle);
 Chart.defaults.color = "#fff";
 
 const datesColor = {
