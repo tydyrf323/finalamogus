@@ -1,5 +1,5 @@
 import { getSession } from 'next-auth/react';
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from 'react-hot-toast';
 import { FiTrash2 } from 'react-icons/fi';
 import axios from 'axios';
@@ -9,17 +9,18 @@ import Navbar from "./navbar";
 const hoy = new Date(Date.now());
 const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
 
-
 export default function Compras({ session, responseopt, responsecod, miscresp }) {
 
   const [tabla, setTabla] = useState([]);
+  const tabRef = useRef(null);
   const [codig, setCodig] = useState({
     prov: responseopt[0]?.IdProveedor,
     fecha: sus,
     cod: responsecod[0]?.codigo,
     cantidad: 1,
     monto: 1,
-    venta: 0
+    venta: 0,
+    desc:''
   });
 
   const formChange = (event) => {
@@ -28,6 +29,14 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
+  }
+
+  function blur() {
+    const amogus = responsecod.filter(arr => arr.codigo === codig.cod);
+    setCodig((prev) => ({
+      ...prev,
+      desc: amogus[0]?.producto
+    }))
   }
 
   const handleRemoveItem = idx => {
@@ -61,7 +70,8 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
       Cantidad: codig.cantidad,
       Precio: codig.venta,
       Obser: codig.obser
-    }).then(() => toast.success('Compra Añadida')).catch((e) => toast.error('Error') );
+    }).then(() => toast.success('Compra Añadida')).catch(() => toast.error('Error'));
+    tabRef.current.focus();
   };
 
   return (
@@ -80,7 +90,7 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
         </div>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>PROVEEDOR:</p>
-          <select name="prov" id="prov" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
+          <select ref={tabRef} tabIndex="1" name="prov" id="prov" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
             {responseopt.map((item, index) => (
               <option key={index} className='bg-black' value={item.IdProveedor}>{item.IdProveedor}</option>
             ))}
@@ -88,7 +98,7 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
         </div>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>CODIGO:</p>
-          <select name="cod" id="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
+          <select onBlur={blur} tabIndex="2" name="cod" id="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange}>
             {responsecod.map((item, index) => (
               <option key={index} className='bg-black' value={item.codigo}>{item.codigo} | {item.producto}</option>
             ))}
@@ -96,7 +106,7 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
         </div>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>DESCRIPCION:</p>
-          <input type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} required placeholder='Descripcion...' />
+          <input tabIndex="3" type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} value={codig.desc} required placeholder='Descripcion...' />
           <datalist id="desc">
             {responsecod.map((item, index) => (
               <option value={item.producto} key={index}>{item.producto}</option>
@@ -108,28 +118,28 @@ export default function Compras({ session, responseopt, responsecod, miscresp })
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>MONTO TOTAL:</p>
-          <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={(e) => {
+          <input tabIndex="4" type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={(e) => {
             formChange(e);
             setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + (miscresp[0].porcentaje / 100))) / (1 - 0.13)) }))
           }} required value={codig.monto} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>CANTIDAD:</p>
-          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={(e) => {
+          <input tabIndex="5" type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={(e) => {
             formChange(e);
             setCodig((prev) => ({ ...prev, venta: Math.ceil(((prev.monto / prev.cantidad) * (1 + (miscresp[0].porcentaje / 100))) / (1 - 0.13)) }))
           }} required value={codig.cantidad} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>PRECIO RECOMENDADO:</p>
-          <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required value={codig.venta} />
+          <input tabIndex="6" type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" onChange={formChange} required value={codig.venta} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>OBSERVACION:</p>
-          <input type="text" name="obser" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} placeholder="Opcional..." />
+          <input tabIndex="7" type="text" name="obser" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' onChange={formChange} placeholder="Opcional..." />
         </div>
         <div className='m-3 comprasform2'>
-          <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
+          <button tabIndex="8" className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
         </div>
       </form>
       <table className='comprasdos w-full text-white text-center h-fit mt-3 overflow-y-scroll'>

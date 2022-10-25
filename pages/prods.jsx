@@ -19,6 +19,7 @@ export default function Productos({ session, response }) {
   const formChange = (event) => {
     let fieldName = event.target.getAttribute('name');
     let fieldValue = event.target.value;
+    if (fieldName === 'cod') fieldValue = event.target.value.toUpperCase();
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);

@@ -1,5 +1,5 @@
 import { getSession } from 'next-auth/react';
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from 'react-hot-toast';
 import { FiTrash2 } from 'react-icons/fi';
 import axios from 'axios';
@@ -13,6 +13,7 @@ const sus = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOStrin
 
 export default function Ventas({ session, responseopt, miscresp }) {
   const [tabla, setTabla] = useState([]);
+  const firstRef = useRef(null);
   const [fac, setFac] = useState({
     num: '',
     time: '',
@@ -40,6 +41,7 @@ export default function Ventas({ session, responseopt, miscresp }) {
   const formChange = (event) => {
     let fieldName = event.target.getAttribute('name');
     let fieldValue = event.target.value;
+    if (fieldName === 'cod') fieldValue = event.target.value.toUpperCase();
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
@@ -93,7 +95,7 @@ export default function Ventas({ session, responseopt, miscresp }) {
         let x = Number(monto)
         cancelado += x;
       }
-      const today = DateTime.now(); 
+      const today = DateTime.now();
       setFac({
         num: `${numeroALetras(sum)}`,
         time: today.hour + ":" + today.minute + ":" + today.second,
@@ -158,6 +160,7 @@ export default function Ventas({ session, responseopt, miscresp }) {
         nit: ''
       })
     }
+    firstRef.current.focus();
   };
 
   return (
@@ -177,22 +180,22 @@ export default function Ventas({ session, responseopt, miscresp }) {
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>FACTURA:</p>
-            <input type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required onChange={formChange} placeholder='X11...' value={codig.fac} />
+            <input ref={firstRef} tabIndex="1" type="text" name="fac" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required onChange={formChange} placeholder='X11...' value={codig.fac} />
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>CODIGO:</p>
-            <input type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Codigo...' onChange={formChange} onBlur={blurred} value={codig.cod} />
+            <input tabIndex="2" type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Codigo...' onChange={formChange} onBlur={blurred} value={codig.cod} />
           </div>
           <div className='px-7 comprasform1'>
             <p className='font-bold my-2'>DESCRIPCION:</p>
             <input type="text" name="desc" list='desc' className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-fuchsia-900 cursor-not-allowed px-4' required placeholder='Descripcion...' onChange={formChange} value={codig.desc} disabled />
           </div>
           <div className='m-3 comprasform1'>
-            <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
+            <button tabIndex="7" className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>MONTO PAGADO:</p>
-            <input type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.monto} />
+            <input tabIndex="3" type="number" name="monto" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0.01" step=".01" required placeholder='0.01' onChange={formChange} value={codig.monto} />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>PRECIO PROD.:</p>
@@ -200,15 +203,15 @@ export default function Ventas({ session, responseopt, miscresp }) {
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CANTIDAD:</p>
-            <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" required placeholder='1...' onChange={formChange} value={codig.cantidad} />
+            <input tabIndex="4" type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" required placeholder='1...' onChange={formChange} value={codig.cantidad} />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>CLIENTE:</p>
-            <input type="text" name="cliente" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="Opcional..." onChange={formChange} value={codig.cliente} />
+            <input tabIndex="5" type="text" name="cliente" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="Opcional..." onChange={formChange} value={codig.cliente} />
           </div>
           <div className='px-7 comprasform2'>
             <p className='font-bold my-2'>NIT/CI:</p>
-            <input type="text" name="nit" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="..." onChange={formChange} value={codig.nit} required />
+            <input tabIndex="6" type="text" name="nit" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' placeholder="..." onChange={formChange} value={codig.nit} required />
           </div>
         </form>
         <table className='comprasdos w-full text-white text-center h-fit mt-3'>

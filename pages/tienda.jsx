@@ -1,5 +1,5 @@
 import Navbar from "./navbar";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { getSession } from 'next-auth/react';
 import { toast } from "react-hot-toast";
 import { FiTrash2 } from 'react-icons/fi';
@@ -9,15 +9,18 @@ import Head from "next/head";
 export default function Tienda({ session }) {
 
   const [tabla, setTabla] = useState([]);
+  const codRef = useRef(null);
   const [codig, setCodig] = useState({
     desc: '',
     venta: '',
-    obser: ''
+    obser: '',
+    cod: ''
   });
 
   const formChange = (event) => {
     let fieldName = event.target.getAttribute('name');
     let fieldValue = event.target.value;
+    if (fieldName === 'cod') fieldValue = event.target.value.toUpperCase();
     let newFormData = { ...codig };
     newFormData[fieldName] = fieldValue;
     setCodig(newFormData);
@@ -67,6 +70,7 @@ export default function Tienda({ session }) {
       }).catch(() => toast.error("Error: La cantidad no puede ser mayor a la existente en ENTRADAS."));
     }
     else toast.error("Codigo Inexistente.");
+    codRef.current.focus();
   }
 
   return (
@@ -81,11 +85,11 @@ export default function Tienda({ session }) {
       <form className='comprasuno text-white tiendaform fadetext' onSubmit={onsub} autoComplete='off'>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>CODIGO:</p>
-          <input type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Codigo...' onChange={formChange} onBlur={blurred} />
+          <input ref={codRef} tabIndex="1" type="text" name="cod" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' required placeholder='Codigo...' onChange={formChange} onBlur={blurred} value={codig.cod} />
         </div>
         <div className='px-7 comprasform2'>
           <p className='font-bold my-2'>CANTIDAD:</p>
-          <input type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={formChange} required />
+          <input tabIndex="2" type="number" name="cantidad" className='w-full py-2 border-2 border-purple-700 rounded-3xl bg-[#1e2124] px-4' min="0" onChange={formChange} required />
         </div>
         <div className='px-7 comprasform1'>
           <p className='font-bold my-2'>DESCRIPCION:</p>
@@ -100,7 +104,7 @@ export default function Tienda({ session }) {
           <input type="number" name="venta" className='w-full py-2 border-2 border-purple-700 rounded-3xl cursor-not-allowed bg-fuchsia-900 px-4' min="0.01" step=".01" placeholder="..." value={codig.venta} onChange={formChange} disabled />
         </div>
         <div className='m-3 comprasform2'>
-          <button className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
+          <button tabIndex="3" className='w-full h-full border-4 border-green-400 rounded-full hover:bg-green-800 transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-100 duration-300 focus:-translate-y-1 focus:scale-100 font-black' type="submit">AÑADIR</button>
         </div>
       </form>
       <table className='comprasdos w-full text-white text-center h-fit mt-3 overflow-y-scroll'>
