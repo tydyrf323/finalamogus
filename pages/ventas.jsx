@@ -42,9 +42,20 @@ export default function Ventas({ session, responseopt, miscresp }) {
     let fieldName = event.target.getAttribute('name');
     let fieldValue = event.target.value;
     if (fieldName === 'cod') fieldValue = event.target.value.toUpperCase();
-    let newFormData = { ...codig };
-    newFormData[fieldName] = fieldValue;
-    setCodig(newFormData);
+    if (fieldName === 'cantidad') {
+      let newFormData = { ...codig };
+      newFormData[fieldName] = fieldValue;
+      axios.get('/api/ventasmultiply', { params: { cod: codig.cod } })
+        .then((datos) => setCodig(() => ({
+          ...newFormData,
+          precioProd: datos.data.length === 0 ? 0 : Number(datos.data[0]?.PrecioDeVenta) * Number(fieldValue)
+        })))
+    }
+    else {
+      let newFormData = { ...codig };
+      newFormData[fieldName] = fieldValue;
+      setCodig(newFormData);
+    }
   }
 
   const handleRemoveItem = idx => {
