@@ -257,7 +257,7 @@ export default function Ventas({ session, responseopt, miscresp }) {
               <td>{item.nit}</td>
               <td><button className='w-full h-full flex justify-center items-center hover:bg-red-500 duration-300' onClick={() => {
                 handleRemoveItem(index);
-                axios.delete('/api/ventas', { data: { id: item.cod } }).then(() => toast.success(`Codigo: ${item.cod} Borrado`, {
+                axios.delete('/api/ventas', { data: { cod: item.cod, qty: item.cantidad } }).then(() => toast.success(`Codigo: ${item.cod} Borrado`, {
                   iconTheme: {
                     primary: '#A200FF',
                     secondary: '#fff',

@@ -25,8 +25,9 @@ export default async function ventasHandler(req, res) {
     }
     else if (req.method === 'DELETE') {
         try {
-            let { id } = req.body;
-            await pool.query("DELETE FROM ventas WHERE Codigo = ?;", [id]);
+            let { cod, qty } = req.body;
+            await pool.query("DELETE FROM ventas WHERE Codigo = ?;", [cod]);
+            await pool.query(`UPDATE tienda SET qty = (qty + ?) WHERE Codigo = ?`, [qty, cod]);
             res.status(200).end();
         } catch (error) {
             console.log(error);
